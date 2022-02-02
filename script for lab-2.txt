@@ -1,0 +1,89 @@
+vi create-hub-cust1-cust2.sh
+
+1)echo "Creating HUB-RG & Resources..."
+
+az group create --location eastus --resource-group HUB-RG
+
+az network vnet create --address-prefix 10.1.0.0/16 \
+--name HUB-VNET-1 --resource-group HUB-RG \
+--subnet-name Subnet-1 --subnet-prefixes 10.1.1.0/24
+
+az network vnet subnet create -g HUB-RG --vnet-name HUB-VNET-1 -n Subnet-2 \
+--address-prefixes 10.1.2.0/24
+
+az network vnet subnet create -g HUB-RG --vnet-name HUB-VNET-1 -n Subnet-3 \
+--address-prefixes 10.1.3.0/24
+
+
+
+
+
+
+echo "====================================================================="
+
+
+2)creating second reouce group 
+
+echo "Creating CUSTOMER1-RG Resources..." 
+
+az group create --location eastus --resource-group CUSTOMER1
+
+az network vnet create --address-prefix 172.16.0.0/16 \
+--name CUSTOMER1-VNET-1 --resource-group HUB-RG \
+--subnet-name Subnet-1 --subnet-prefixes 172.16.1.0/24
+
+az network vnet subnet create -g CUSTOMER1 --vnet-name CUSTOMER1-VNET-1 -n Subnet-2 \
+--address-prefixes 172.16.2.0/24
+
+az network vnet subnet create -g CUSTOMER1 --vnet-name CUSTOMER1-VNET-1 -n Subnet-3 \
+--address-prefixes 172.16.3.0/24
+
+az vm create --resource-group HUB-RG --name HUBSVR1 --image UBuntuLTS --vnet-name HUB-VNET-1 \
+--subnet Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+
+az vm create --resource-group CUSTOMER1-RG  --name CUST1SVR1 --image UBuntuLTS --vnet-name CUSTOMER1-RG \
+--subnet Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+echo "====================================================================="
+
+3)creating Third  reouce group
+
+echo "Creating CUSTOMER2-RG Resources..." 
+ 
+
+
+az group create --location eastus --resource-group CUSTOMER2
+
+az network vnet create --address-prefix 172.17.0.0/16 \
+--name CUSTOMER2-VNET-1 --resource-group HUB-RG \
+--subnet-name Subnet-1 --subnet-prefixes 172.17.1.0/24
+
+az network vnet subnet create -g CUSTOMER2 --vnet-name CUSTOMER1-VNET-1 -n Subnet-2 \
+--address-prefixes 172.17.2.0/24
+
+az network vnet subnet create -g CUSTOMER2 --vnet-name CUSTOMER1-VNET-1 -n Subnet-3 \
+--address-prefixes 172.17.3.0/24
+
+az vm create --resource-group CUSTOMER2-RG  --name CUST2SVR1 --image UBuntuLTS --vnet-name CUSTOMER2-RG \
+--subnet Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+
+===========================================
+
+creating Virtual machine 
+
+az vm create --resource-group HUB-RG --name HUBSVR1 --image UBuntuLTS --vnet-name HUB-VNET-1 \
+--subnet Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+az vm create --resource-group CUSTOMER1-RG  --name CUST1SVR1 --image UBuntuLTS --vnet-name CUSTOMER1-RG \
+--subnet Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
+
+az vm create --resource-group CUSTOMER2-RG  --name CUST2SVR1 --image UBuntuLTS --vnet-name CUSTOMER2-RG \
+--subnet Subnet-1 --admin-username testuser --admin-password "India@123456" --size Standard_B1s \
+--nsg ""
